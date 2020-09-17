@@ -2,9 +2,9 @@
 
 {% block header %} Add Cheese Boarder {% endblock %}
 
-{% block body %}
+{% block content %}
 
-<form action="/users/new" method="POST">
+<!-- <form action="/users/new" method="POST">
   <label for="first-name">First Name</label>
   <input type="text" placeholder="Enter first name">
 
@@ -39,6 +39,21 @@
 
   <button type="submit">Add</button>
 
-</form>
+</form> -->
+
+<div>
+  <h2>{{ mode }} Cheese Boarder</h2>
+  <form method="post" id="user-form">
+    {{ form.hidden_tag() }}
+
+    {% for field in form if field.widget.input_type != 'hidden' %}
+      {% for error in field.errors %}
+        <span class="text-danger">{{ error }}</span>
+      {% endfor %}
+      {{ field(placeholder=field.label.text, class="form-control") }}
+    {% endfor %}
+    <button class="btn btn-primary btn-lg btn-block">Add</button>
+  </form>
+</div>
 
 {% endblock %}

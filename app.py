@@ -1,9 +1,11 @@
 """Blogly application."""
 
 from flask import Flask, redirect, render_template, request
-from models import db, connect_db, User
-
 from flask_debugtoolbar import DebugToolbarExtension
+from sqlalchemy.exc import IntegrityError
+
+from forms import UserForm, LoginForm
+from models import db, connect_db, User
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "secret"
@@ -35,58 +37,66 @@ def get_users():
         users=users
     )
 
-@app.route('/users/new')
+@app.route('/users/new', methods=["GET", "POST"])
 def create_new_user_html():
-""" Route to create new user form"""
-    return render_template('newuserform.html')
+    """ Route to create new user form """
+    return render_template('userform.html')
 
 @app.route('/users/new', methods="POST")
-""" POST new user to database """"
 def add_new_user():
-""" Takes form data to create new user """
-    first_name = request.form['first-name']
-    last_name = request.form['last-name']
-    username = request.form['username']
-    password = request.form['password'] # TODO needs to be hashed password
-    img_url = request.form['imageURL']
-    status = request.form['status']
+    """Create New User through form
+    Creates then redirects to homepage.
+    If form not valid, show form.
+    If username is taken => flash message @ form
+    """
+    form = UserForm()
+""" Validate form and Authenticates witness """
+if form.validate_on_submit():
+    try:
+        if User.auth(form.w_username.data, form.w_pwd.data):
+            try:
+                User.register(
+                            username=form.username.data,
+                            password=form.password.data,
+                            first_name=form.first_name.data,
+                            last_name=form.last_name.data,
+                            img_url=form.img_url.data or User.img_url.default.arg,
+                            status=form.status.data or User.status.default.arg,
+                            )
+                db.session.commit()
 
-    # new_user = User(
-    #     username=username,
-    #     first_name=first_name,
-    #     last_name=last_name,
-    #     password=password,
-    #     img_url=img_url
-    #     status=status
-    # )
+            except IntegrityError:
+                flash("Username already taken", 'danger')
+                return render_template('userform.html', form=form, mode='Add')
 
-    new_user = User.register(cls,
-                username,
-                password,
-                first_name,
-                last_name,
-                img_url,
-                status)
+            # TODO log in user
+            return redirect("/users")
+        else:
+            flash("Witnessing Member failed to authenticate", 'danger')
+            return render_template('userform.html', form=form, mode='Add')
 
-    db.session.add(new_user)
-    db.session.commit()
-    return redirect("/users")
+    except IntegrityError:
+        flash("Username already taken", 'danger')
+        return render_template('userform.html', form=form, mode='Add')
+else:
+    return render_template('userform.html', form=form, mode='Add')
+
 
 @app.route('/users/<username>')
+def get_user(username):
     """ GET user data """
-    def get_user(username):
-        current_user = User.query.filter_by(username=username).one()
-        user_full_name = f"{current_user.first_name} {current_user.last_name}"
-        img_url = current_user.img_url
-        status = current_user.status
+    current_user = User.query.filter_by(username=username).one()
+    user_full_name = f"{current_user.first_name} {current_user.last_name}"
+    img_url = current_user.img_url
+    status = current_user.status
 
-        return render_template(
-            'userdetail.html',
-            user=user_full_name,
-            status=status,
-            image_url=img_url,
-            username=username
-        )
+    return render_template(
+        'userdetail.html',
+        user=user_full_name,
+        status=status,
+        image_url=img_url,
+        username=username
+    )
 
 @app.route('users/<username>/edit')
 def edit_user_html():
