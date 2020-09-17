@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block header %} Add Cheese Boarder {% endblock %}
+
+{% block body %}
+
+<form action="/users/new" method="POST">
+  <label for="first-name">First Name</label>
+  <input type="text" placeholder="Enter first name">
+
+  <label for="last-ame">Last Name</label>
+  <input type="text"placeholder="Enter last name">
+
+  <label for="username">Username</label>
+  <input type="text"placeholder="Enter username">
+
+  <label for="password">Password</label>
+  <input type="password" placeholder="Enter password">
+
+  <label for="imageURL">Image URL</label>
+  <input type="text" placeholder="Enter address of profile pic">
+
+  <label for="status"></label>
+  <select name="status" id="status">
+    <option value="candidate" selected="selected">Candidate</option>
+    <option value="member">Member</option>
+    <option value="emeritus">Emeritus</option>
+    <option value="former_member">Former Member</option>
+  </select>
+
+  <div>
+    <h3>You need another member to vouch for this action</h3>
+    <label for="witness-username">Username</label>
+    <input type="text" placeholder="Enter username">
+
+    <label for="witness-password">Password</label>
+    <input type="password" placeholder="Enter password">
+  </div>
+
+  <button type="submit">Add</button>
+
+</form>
+
+{% endblock %}

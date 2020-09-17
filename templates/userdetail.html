@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block header %} Cheese Boarder Details {% endblock %}
+
+{% block body %}
+
+<span><img src="{{ image_url }}" alt="profile picture for user"></span>
+<span>
+  <h2>{{ user }}</h2>
+  <h3>{{ status }}</h3>
+</span>
+<a href="/users/{{ username }}/edit">Edit</a>
+
+<form action="/users/{{ username }}/delete" method="POST">
+  <div>
+    <h3>You need another member to Delete</h3>
+    <label for="witness-first-name">First Name</label>
+    <input type="text" placeholder="Enter first name">
+
+    <label for="witness-password">Password</label>
+    <input type="password" placeholder="Enter password">
+  </div>
+  <button>Delete</button>
+</form>
+
+{% endblock %}
