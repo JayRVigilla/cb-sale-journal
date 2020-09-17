@@ -37,13 +37,13 @@ def get_users():
 
 @app.route('/users/new')
 def create_new_user_html():
-    """ Route to create new user form"""
+""" Route to create new user form"""
     return render_template('newuserform.html')
 
 @app.route('/users/new', methods="POST")
-    """ POST new user to database """"
+""" POST new user to database """"
 def add_new_user():
-    """ Takes form data to create new user """
+""" Takes form data to create new user """
     first_name = request.form['first-name']
     last_name = request.form['last-name']
     username = request.form['username']
