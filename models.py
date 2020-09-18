@@ -21,24 +21,25 @@ class User(db.Model):
         db.Integer,
         primary_key=True)
     username = db.Column(
-            db.String,
-            nullable=False)
+        db.String,
+        nullable=False,
+        unique=True)
     first_name = db.Column(
-            db.String,
-            nullable=False)
+        db.String,
+        nullable=False)
     last_name = db.Column(
-            db.String,
-            nullable=False)
+        db.String,
+        nullable=False)
     img_url = db.Column(
-            db.String,
-            default='https://i.pinimg.com/originals/b4/00/85/b400851a6b07f8877a9236f275bd8d4f.jpg')
+        db.String,
+        default='https://i.pinimg.com/originals/b4/00/85/b400851a6b07f8877a9236f275bd8d4f.jpg')
     password = db.Column(
-            db.String,
-            nullable=False)
+        db.String,
+        nullable=False)
     # viable options will be candidate, member, emeritus, former_member
     status = db.Column(
-            db.String,
-            default='candidate')
+        db.String,
+        default='candidate')
 
     @classmethod
     def register(cls, username, password, first_name, last_name, img_url, status):
@@ -46,13 +47,13 @@ class User(db.Model):
         hashed = bcrypt.generate_password_hash(password).decode("utf8")
 
         user = User(
-                username=username,
-                password=hashed,
-                first_name=first_name,
-                last_name=last_name,
-                img_url=img_url,
-                status=status
-                )
+            username=username,
+            password=hashed,
+            first_name=first_name,
+            last_name=last_name,
+            img_url=img_url,
+            status=status
+            )
         db.session.add(user)
         return user
 

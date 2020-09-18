@@ -1,10 +1,10 @@
 """Blogly application."""
 
-from flask import Flask, redirect, render_template, request, session, g
+from flask import Flask, redirect, render_template, request, session, g, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserForm, LoginForm
+from forms import UserForm, LoginForm, PrePopulatedForm
 from models import db, connect_db, User
 
 CURR_USER_KEY = "curr_user"
@@ -46,6 +46,17 @@ def do_logout():
 @app.route('/login', methods=["GET", "POST"])
 def login_user():
     """ Render Login Screen and Auth from form data """
+    form = LoginForm()
+
+    if form.validate_on_submit:
+        user = User.auth(form.username.data, form.password.data)
+        if user:
+                do_login(user)
+                flash(f"Hello, {user.username}!", 'success')
+                return redirect('/users')
+
+        flash('Invalid credentials,', 'danger')
+
     return render_template(
         'userform.html',
         form=form,
@@ -66,11 +77,6 @@ def get_users():
         users=users
     )
 
-# @app.route('/users/new', methods=["GET", "POST"])
-# def create_new_user_html():
-#     """ Route to create new user form """
-#     return render_template('userform.html')
-
 @app.route('/users/new', methods=["GET", "POST"])
 def add_new_user():
     """Create New User through form
@@ -83,21 +89,19 @@ def add_new_user():
     if form.validate_on_submit():
         try:
             new_user = User.register(
-                        username=form.username.data,
-                        password=form.password.data,
-                        first_name=form.first_name.data,
-                        last_name=form.last_name.data,
-                        img_url=form.img_url.data or User.img_url.default.arg,
-                        status=form.status.data or User.status.default.arg,
-                        )
+                username=form.username.data,
+                password=form.password.data,
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                img_url=form.img_url.data or User.img_url.default.arg,
+                status=form.status.data or User.status.default.arg,
+            )
             db.session.commit()
 
         except IntegrityError:
             flash("Username already taken", 'danger')
-            return render_template(
-                'userform.html',
-                form=form,
-                mode='Add')
+            return render_template('userform.html', form=form, mode='Add')
+
         do_login(new_user)
         return redirect("/users")
     else:
@@ -131,7 +135,7 @@ def edit_user_html(id):
     Successful edit redirects to detail page
     If form not valid, show form.
     """
-    form = UserForm(obj=g.user)
+    form = UserForm()
 
     if form.validate_on_submit():
 
@@ -161,14 +165,17 @@ def edit_user_html(id):
     else:
         user = User.query.filter_by(id=id).first()
         data = user.username
+        edit = PrePopulatedForm(obj=g.user)
 
         return render_template(
             'useredit.html',
-            form=form,
+            form=edit,
             user=user,
             mode='SchmEdit'
             )
 
 @app.route('/users/delete', methods=["POST"])
 def delete_user():
-    """ Removes User from database """
+    """ Removes User from database
+        redirect to /users
+    """
