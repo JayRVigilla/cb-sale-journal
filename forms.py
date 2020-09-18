@@ -9,14 +9,11 @@ class UserForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired()])
     last_name = StringField('Last Name', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=6)])
-    img_url = URL('Username', validators=[Optional()])
+    img_url = StringField('Image URL', validators=[URL(), Optional(strip_whitespace=True)])
     status = SelectField('Membership Status', choices=[('candidate', 'Candidate'), ('member', 'Member'), ('emeritus', 'Emeritus'), ('former_member', 'Former Member')], validators=[Optional()])
 
-    w_username = StringField('Username', validators=[InputRequired()])
-    w_pwd = PasswordField('Password', validators=[InputRequired()])
-
 class LoginForm(FlaskForm):
-    """" Login form """ "
+    """" Login form """
 
     username = StringField('Username', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired(), Length(min=6)])
