@@ -34,14 +34,17 @@ def add_user_to_g():
     else:
         g.user = None
 
+
 def do_login(user):
     """Log in user."""
     session[CURR_USER_KEY] = user.id
+
 
 def do_logout():
     """Logout user."""
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
 
 @app.route('/login', methods=["GET", "POST"])
 def login_user():
@@ -63,10 +66,12 @@ def login_user():
         mode='Log In'
         )
 
+
 @app.route('/')
 def get_index():
     """ Redirects to list of all Users """
     return redirect("/users")
+
 
 @app.route('/users')
 def get_users():
@@ -76,6 +81,7 @@ def get_users():
         'userslist.html',
         users=users
     )
+
 
 @app.route('/users/new', methods=["GET", "POST"])
 def add_new_user():
@@ -129,12 +135,18 @@ def get_user(id):
         id=id
     )
 
+
 @app.route('/users/<int:id>/edit', methods=["GET", "POST"])
 def edit_user_html(id):
     """ Allows User to edit from form
     Successful edit redirects to detail page
     If form not valid, show form.
     """
+
+    if not g.user:
+        flash('Access unauthorized.', 'danger')
+        return redirect('/')
+
     form = UserForm()
 
     if form.validate_on_submit():
@@ -144,35 +156,28 @@ def edit_user_html(id):
                 ELSE form.status != user.status
                     require memberProxy
         """
-        try:
-            new_user_data = User.authenticate(
-                        username=form.username.data,
-                        password=form.password.data,
-                        first_name=form.first_name.data,
-                        last_name=form.last_name.data,
-                        img_url=form.img_url.data or User.img_url.default.arg,
-                        status=form.status.data or User.status.default.arg,
-                        )
+
+        user = User.auth(username=form.username.data,
+            password=form.password.data)
+
+        if user:
+            user.username = form.username.data
+            user.password = form.password.data
+            user.first_name = form.first_name.data
+            user.last_name = form.last_name.data
+            user.img_url = form.img_url.data
+            user.status = form.status.data
+
             db.session.commit()
-
-        except IntegrityError:
-            flash("Username already taken", 'danger')
-            return render_template(
-                'userform.html',
-                form=form,
-                mode='Edit')
-        return redirect("/user/")
-    else:
-        user = User.query.filter_by(id=id).first()
-        data = user.username
-        edit = PrePopulatedForm(obj=g.user)
-
+            return redirect(f"/users/{user.id}")
+        else:
+            flash('Invalid credentials.', 'danger')
+            return redirect('/')
         return render_template(
-            'useredit.html',
-            form=edit,
-            user=user,
-            mode='SchmEdit'
-            )
+            'userform.html',
+            form=form,
+            mode='Edit')
+
 
 @app.route('/users/delete', methods=["POST"])
 def delete_user():
