@@ -67,6 +67,6 @@ class User(db.Model):
                 return u
         return False
 
-    @classmethod
+    # @classmethod
 
 

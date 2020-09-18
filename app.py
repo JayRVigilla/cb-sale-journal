@@ -27,7 +27,7 @@ db.create_all()
 
 @app.before_request
 def add_user_to_g():
-    """If logged in: add curr_user to Flask global."""
+    """If logged in: add user to Flask global."""
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -101,7 +101,10 @@ def add_new_user():
         do_login(new_user)
         return redirect("/users")
     else:
-        return render_template('userform.html', form=form, mode='Add')
+        return render_template(
+            'userform.html',
+            form=form,
+            mode='Add')
 
 
 @app.route('/users/<int:id>')
@@ -118,20 +121,27 @@ def get_user(id):
         user=user_full_name,
         status=status,
         image_url=img_url,
-        username=username
+        username=username,
+        id=id
     )
 
 @app.route('/users/<int:id>/edit', methods=["GET", "POST"])
-def edit_user_html():
+def edit_user_html(id):
     """ Allows User to edit from form
     Successful edit redirects to detail page
     If form not valid, show form.
     """
-    form = UserForm()
+    form = UserForm(obj=g.user)
 
     if form.validate_on_submit():
+
+        """if form valid
+                IF currentUser.status IS member => EDIT values
+                ELSE form.status != user.status
+                    require memberProxy
+        """
         try:
-            new_user_data = User.register(
+            new_user_data = User.authenticate(
                         username=form.username.data,
                         password=form.password.data,
                         first_name=form.first_name.data,
@@ -149,7 +159,15 @@ def edit_user_html():
                 mode='Edit')
         return redirect("/user/")
     else:
-        return render_template('userform.html', form=form, mode='Edit')
+        user = User.query.filter_by(id=id).first()
+        data = user.username
+
+        return render_template(
+            'useredit.html',
+            form=form,
+            user=user,
+            mode='SchmEdit'
+            )
 
 @app.route('/users/delete', methods=["POST"])
 def delete_user():
