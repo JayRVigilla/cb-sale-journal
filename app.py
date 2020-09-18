@@ -55,7 +55,7 @@ def login_user():
 @app.route('/')
 def get_index():
     """ Redirects to list of all Users """
-    return redirect("/users/")
+    return redirect("/users")
 
 @app.route('/users')
 def get_users():
@@ -104,13 +104,14 @@ def add_new_user():
         return render_template('userform.html', form=form, mode='Add')
 
 
-@app.route('/users/<username>')
-def get_user(username):
+@app.route('/users/<int:id>')
+def get_user(id):
     """ GET user data """
-    current_user = User.query.filter_by(username=username).one()
+    current_user = User.query.filter_by(id=id).first()
     user_full_name = f"{current_user.first_name} {current_user.last_name}"
     img_url = current_user.img_url
     status = current_user.status
+    username = current_user.username
 
     return render_template(
         'userdetail.html',
@@ -120,10 +121,35 @@ def get_user(username):
         username=username
     )
 
-@app.route('/users/<username>/edit')
+@app.route('/users/<int:id>/edit', methods=["GET", "POST"])
 def edit_user_html():
-    """ Removes User from database """
+    """ Allows User to edit from form
+    Successful edit redirects to detail page
+    If form not valid, show form.
+    """
+    form = UserForm()
 
+    if form.validate_on_submit():
+        try:
+            new_user_data = User.register(
+                        username=form.username.data,
+                        password=form.password.data,
+                        first_name=form.first_name.data,
+                        last_name=form.last_name.data,
+                        img_url=form.img_url.data or User.img_url.default.arg,
+                        status=form.status.data or User.status.default.arg,
+                        )
+            db.session.commit()
+
+        except IntegrityError:
+            flash("Username already taken", 'danger')
+            return render_template(
+                'userform.html',
+                form=form,
+                mode='Edit')
+        return redirect("/user/")
+    else:
+        return render_template('userform.html', form=form, mode='Edit')
 
 @app.route('/users/delete', methods=["POST"])
 def delete_user():

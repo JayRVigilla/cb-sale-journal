@@ -5,7 +5,7 @@
 {% block content %}
 <ul>
 {% for user in users %}
-  <li><a href=".users/{{username}}">{{user.first_name}} {{user.last_name}} - {{user.status}}</a></li>
+  <li><a href="/users/{{ user.id }}">{{user.first_name}} {{user.last_name}} - {{user.status}}</a></li>
 {% endfor %}
 </ul>
 
