@@ -21,6 +21,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 db.create_all()
 
+
 #################
 # Users Routes  #
 #################
@@ -44,7 +45,14 @@ def do_logout():
     """Logout user."""
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+        del g
 
+# FIX doesn't redirect as a function
+# def logged_in():
+#     """ Redirects to /login if not logged in """
+#     if  not g.user:
+#         flash('You must be logged in.', 'danger')
+#         return redirect('/login')
 
 @app.route('/login', methods=["GET", "POST"])
 def login_user():
@@ -54,11 +62,11 @@ def login_user():
     if form.validate_on_submit:
         user = User.auth(form.username.data, form.password.data)
         if user:
-                do_login(user)
-                flash(f"Hello, {user.username}!", 'success')
-                return redirect('/users')
+            do_login(user)
+            flash(f"Hello, {user.username}!", 'success')
+            return redirect('/users')
 
-        flash('Invalid credentials,', 'danger')
+        # flash('Invalid credentials', 'danger')
 
     return render_template(
         'userform.html',
@@ -66,16 +74,30 @@ def login_user():
         mode='Log In'
         )
 
+@app.route('/logout', methods=["GET"])
+def logout_user():
+        do_logout()
+        return redirect('/login')
 
 @app.route('/')
 def get_index():
-    """ Redirects to list of all Users """
-    return redirect("/users")
+    """ Redirects to login if no g.user
+        else redirects to /users
+    """
+    if g.user:
+        return redirect('users')
+    return redirect('/login')
 
 
 @app.route('/users')
 def get_users():
     """ Lists all users """
+    # logged_in()  # FIX won't redirect as function
+
+    if  not g.user:
+        flash('You must be logged in.', 'danger')
+        return redirect('/login')
+
     users = User.query.all()
     return render_template(
         'userslist.html',
@@ -90,6 +112,10 @@ def add_new_user():
     If form not valid, show form.
     If username is taken => flash message @ form
     """
+    if  not g.user:
+        flash('You must be logged in.', 'danger')
+        return redirect('/login')
+
     form = UserForm()
     """ Validate form """
     if form.validate_on_submit():
@@ -120,6 +146,11 @@ def add_new_user():
 @app.route('/users/<int:id>')
 def get_user(id):
     """ GET user data """
+
+    if  not g.user:
+        flash('You must be logged in.', 'danger')
+        return redirect('/login')
+
     current_user = User.query.filter_by(id=id).first()
     user_full_name = f"{current_user.first_name} {current_user.last_name}"
     img_url = current_user.img_url
@@ -143,20 +174,13 @@ def edit_user_html(id):
     If form not valid, show form.
     """
 
-    if not g.user:
-        flash('Access unauthorized.', 'danger')
-        return redirect('/')
+    if  not g.user:
+        flash('You must be logged in.', 'danger')
+        return redirect('/login')
 
     form = UserForm()
 
     if form.validate_on_submit():
-
-        """if form valid
-                IF currentUser.status IS member => EDIT values
-                ELSE form.status != user.status
-                    require memberProxy
-        """
-
         user = User.auth(username=form.username.data,
             password=form.password.data)
 
@@ -170,17 +194,16 @@ def edit_user_html(id):
 
             db.session.commit()
             return redirect(f"/users/{user.id}")
+
         else:
             flash('Invalid credentials.', 'danger')
             return redirect('/')
-        return render_template(
-            'userform.html',
-            form=form,
-            mode='Edit')
 
+    return render_template(
+        'userform.html',
+        form=form,
+        mode='Edit')
 
-@app.route('/users/delete', methods=["POST"])
-def delete_user():
-    """ Removes User from database
-        redirect to /users
-    """
+# There will not be a route to delete users
+# Change status instead to 'former_member' or 'former_candidate'
+
