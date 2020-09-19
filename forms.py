@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField
+from wtforms import StringField, PasswordField, SelectField, IntegerField
 from wtforms.validators import DataRequired, InputRequired, Length, URL, Optional
 
 class UserForm(FlaskForm):
@@ -21,4 +21,18 @@ class LoginForm(FlaskForm):
 class PrePopulatedForm(UserForm):
     """ PrePopulatedForm takes UserForm Object
         allows form to render with pre-existing values
+        
+        example: PrepopulatedForm(obj=UserForm)
     """
+
+class SalesReport(FlaskForm):
+    """" Form for nightly sales reporting """
+
+    am_racks = IntegerField('am_racks', validators=[InputRequired()])
+    pm_racks = IntegerField('pm_racks', validators=[InputRequired()])
+    gf = IntegerField('gf', validators=[InputRequired()])
+    vegan = IntegerField('vegan', validators=[InputRequired()])
+    vgf = IntegerField('vgf', validators=[InputRequired()])
+    sales = IntegerField('sales', validators=[InputRequired()])
+    pizza = StringField('pizza', validators=[InputRequired()])
+    notes = StringField('notes', validators=[InputRequired()])

@@ -61,7 +61,7 @@ def login_user():
     form = LoginForm()
 
     if form.validate_on_submit:
-        user = User.auth(form.username.data, form.password.data)
+        user = User.auth(form.l_username.data, form.l_password.data)
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", 'success')
