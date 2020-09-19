@@ -42,13 +42,17 @@ class User(db.Model):
         default='candidate')
 
     @classmethod
+    def hash_pwd(cls, password):
+        return bcrypt.generate_password_hash(password).decode("utf8")
+
+    @classmethod
     def register(cls, username, password, first_name, last_name, img_url, status):
         """ Register new user """
-        hashed = bcrypt.generate_password_hash(password).decode("utf8")
+        # hashed = bcrypt.generate_password_hash(password).decode("utf8")
 
         user = User(
             username=username,
-            password=hashed,
+            password=hash_pwd(password),
             first_name=first_name,
             last_name=last_name,
             img_url=img_url,

@@ -15,8 +15,8 @@ class UserForm(FlaskForm):
 class LoginForm(FlaskForm):
     """" Login form """
 
-    username = StringField('Username', validators=[InputRequired()])
-    password = PasswordField('Password', validators=[InputRequired(), Length(min=6)])
+    l_username = StringField('Username', validators=[InputRequired()])
+    l_password = PasswordField('Password', validators=[InputRequired(), Length(min=6)])
 
 class PrePopulatedForm(UserForm):
     """ PrePopulatedForm takes UserForm Object

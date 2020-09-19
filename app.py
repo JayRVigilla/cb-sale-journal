@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 
 from forms import UserForm, LoginForm, PrePopulatedForm
 from models import db, connect_db, User
+import pdb
 
 CURR_USER_KEY = "curr_user"
 
@@ -178,21 +179,23 @@ def edit_user_html(id):
         flash('You must be logged in.', 'danger')
         return redirect('/login')
 
-    form = UserForm()
+    form = PrePopulatedForm(obj=g.user)
+    verify_form = LoginForm()
 
-    if form.validate_on_submit():
-        user = User.auth(username=form.username.data,
-            password=form.password.data)
+    if form.validate_on_submit() and verify_form.validate_on_submit():
+        user = User.auth(verify_form.l_username.data,
+            verify_form.l_password.data)
 
         if user:
             user.username = form.username.data
-            user.password = form.password.data
+            user.password = User.hash_pwd(form.password.data)
             user.first_name = form.first_name.data
             user.last_name = form.last_name.data
-            user.img_url = form.img_url.data
+            user.img_url = form.img_url.data or form.img_url.default
             user.status = form.status.data
 
             db.session.commit()
+
             return redirect(f"/users/{user.id}")
 
         else:
@@ -200,8 +203,9 @@ def edit_user_html(id):
             return redirect('/')
 
     return render_template(
-        'userform.html',
+        'useredit.html',
         form=form,
+        verify_form=verify_form,
         mode='Edit')
 
 # There will not be a route to delete users
