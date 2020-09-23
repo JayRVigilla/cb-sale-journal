@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block header %} Sales Report {% endblock %}
+
+{% block content %}
+
+<span><img src="{{ image_url }}" alt="profile picture for user"></span>
+<span>
+  <h2>{{ user }}</h2>
+  <h3>{{ status }}</h3>
+</span>
+
+<form method="post" id="sales-report-form">
+  {{ form.hidden_tag() }}
+
+  {% for field in form if field.widget.input_type != 'hidden' %}
+    {% for error in field.errors %}
+      <span class="text-danger">{{ error }}</span>
+    {% endfor %}
+    {{ field(placeholder=field.label.text, class="form-control") }}
+  {% endfor %}
+  <button class="btn btn-primary btn-lg btn-block">{{ mode}}</button>
+</form>
+
+{% endblock %}

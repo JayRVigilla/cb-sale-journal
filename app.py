@@ -3,8 +3,9 @@
 from flask import Flask, redirect, render_template, request, session, g, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+# from flask_login import LoginManager
 
-from forms import UserForm, LoginForm, PrePopulatedForm
+from forms import UserForm, LoginForm, PrePopulatedForm, SalesReport
 from models import db, connect_db, User
 import pdb
 
@@ -22,6 +23,12 @@ app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 db.create_all()
 
+# login_manager = LoginManager()
+# login_manager.init_app(app)
+
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.get(user_id)
 
 #################
 # Users Routes  #
@@ -210,4 +217,47 @@ def edit_user_html(id):
 
 # There will not be a route to delete users
 # Change status instead to 'former_member' or 'former_candidate'
+# Perhaps move to an archive db? save id, id of user who deleted, data as object
 
+#######################
+# Sales Report Routes #
+#######################
+
+sr_URL = '/reports/sales'
+
+# get_report(s) - GET
+@app.route(sr_URL, methods=["GET"])
+def get_report():
+    """ GETs report of specific date
+    OR of a range of dates """
+
+
+# create_report - POST
+@app.route(sr_URL, methods=["GET", "POST"])
+def create_report():
+    """ POSTs report to DB"""
+    form = SalesReport()
+
+    if form.validate_on_submit():
+        SalesReport.create_report(
+        member_id = form.member_id.data, # TODO should be pulled from g.user
+        date = form.date.data,
+        racks_am = form.racks_am.data,
+        racks_pm = form.racks_pm.data,
+        gf = form.gf.data,
+        vegan = form.vegan.data,
+        vgf = form.vgf.data,
+        sales = form.sales.data,
+        pizza = form.pizza.data,
+        notes = form.notes.data,
+        weather = form.weather.data,
+        api = form.api.data
+        )
+        db.session.commit()
+
+# edit_report - POST GET
+@app.route(f"{sr_URL}/edit", methods=["GET", "POST"])
+def edit_report():
+    """ edits report on certain date"""
+
+# delete report - though this should not destroy record but move to archive db

@@ -72,6 +72,82 @@ class User(db.Model):
                 return u
         return False
 
-    # @classmethod
+class SalesReport(db.Model):
+    """ Class for SalesReports """
+    __tablename__ = 'sales-reports'
 
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        nullable=False)
+    member_id= db.Column(
+        db.Integer,
+        nullable=False)
+    date = db.Column(
+        db.DateTime,
+        nullable=False)
+    racks_am = db.Column(
+        db.Float,
+        nullable=False)
+    racks_pm = db.Column(
+        db.Float,
+        nullable=False)
+    gf = db.Column(
+        db.Integer,
+        nullable=False)
+    vegan = db.Column(
+        db.Integer,
+        nullable=False)
+    vgf = db.Column(
+        db.Integer,
+        nullable=False)
+    sales = db.Column(
+        db.Float,
+        nullable=False)
+    pizza = db.Column(
+        db.String,
+        nullable=False)
+    notes = db.Column(
+        db.String,
+        nullable=False)
+    weather = db.Column(
+        db.String,
+        nullable=False)  # received from third party api
+    api = db.Column(
+        db.String,
+        nullable=False)  # received from third party api
 
+    @classmethod
+    def create_report(
+        cls,
+        member_id,
+        date,
+        racks_am,
+        racks_pm,
+        gf,
+        vegan,
+        vgf,
+        sales,
+        pizza,
+        notes,
+        weather,
+        api)
+
+        report = SalesReport(
+        member_id,
+        date,
+        racks_am,
+        racks_pm,
+        gf,
+        vegan,
+        vgf,
+        sales,
+        pizza,
+        notes,
+        weather,
+        api
+        )
+
+        db.session.add(report)
+
+        return report
