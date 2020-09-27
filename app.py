@@ -1,6 +1,6 @@
 """Blogly application."""
 
-from flask import Flask, redirect, render_template, request, session, g, flash
+from flask import Flask, redirect, render_template, session, g, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 # from flask_login import LoginManager
@@ -12,16 +12,16 @@ import pdb
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "secret"
-debug = DebugToolbarExtension(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///CB_sales_journal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
+app.config['SECRET_KEY'] = "secret"
+toolbar = DebugToolbarExtension(app)
 
 
 connect_db(app)
-db.create_all()
+# db.create_all()
 
 # login_manager = LoginManager()
 # login_manager.init_app(app)
@@ -34,9 +34,10 @@ db.create_all()
 # Users Routes  #
 #################
 
+
 @app.before_request
 def add_user_to_g():
-    """If logged in: add user to Flask global."""
+    """If logged in: add curr_user to Flask global."""
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
@@ -53,7 +54,6 @@ def do_logout():
     """Logout user."""
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
-        del g
 
 # FIX doesn't redirect as a function
 # def logged_in():
@@ -62,19 +62,21 @@ def do_logout():
 #         flash('You must be logged in.', 'danger')
 #         return redirect('/login')
 
+
 @app.route('/login', methods=["GET", "POST"])
 def login_user():
     """ Render Login Screen and Auth from form data """
     form = LoginForm()
 
     if form.validate_on_submit:
-        user = User.auth(form.l_username.data, form.l_password.data)
+        user = User.auth(form.l_username.data,
+                         form.l_password.data)
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", 'success')
             return redirect('/users')
-
-        # flash('Invalid credentials', 'danger')
+        else:
+            flash('Invalid credentials', 'danger')
 
     return render_template(
         'userform.html',
@@ -82,10 +84,13 @@ def login_user():
         mode='Log In'
         )
 
+
 @app.route('/logout', methods=["GET"])
 def logout_user():
-        do_logout()
-        return redirect('/login')
+    do_logout()
+    flash("You're logged out.", 'success')
+    return redirect('/login')
+
 
 @app.route('/')
 def get_index():
@@ -102,7 +107,7 @@ def get_users():
     """ Lists all users """
     # logged_in()  # FIX won't redirect as function
 
-    if  not g.user:
+    if not g.user:
         flash('You must be logged in.', 'danger')
         return redirect('/login')
 
@@ -120,7 +125,7 @@ def add_new_user():
     If form not valid, show form.
     If username is taken => flash message @ form
     """
-    if  not g.user:
+    if not g.user:
         flash('You must be logged in.', 'danger')
         return redirect('/login')
 
@@ -217,47 +222,79 @@ def edit_user_html(id):
 
 # There will not be a route to delete users
 # Change status instead to 'former_member' or 'former_candidate'
-# Perhaps move to an archive db? save id, id of user who deleted, data as object
+# Move to an archive db? save id, id of user who deleted, data as object
 
 #######################
 # Sales Report Routes #
 #######################
 
+
 sr_URL = '/reports/sales'
 
+
 # get_report(s) - GET
-@app.route(sr_URL, methods=["GET"])
+@app.route(f"{sr_URL}/<int:id>", methods=["GET"])
 def get_report():
     """ GETs report of specific date
     OR of a range of dates """
 
 
 # create_report - POST
-@app.route(sr_URL, methods=["GET", "POST"])
+@app.route(f"{sr_URL}/new", methods=["GET", "POST"])
 def create_report():
-    """ POSTs report to DB"""
+    """ POSTs report to DB
+    if not logged in redirect to login
+    if form valid then commit to db
+    else render form
+    """
+    if not g.user:
+        flash('You must be logged in.', 'danger')
+        return redirect('/login')
+
     form = SalesReport()
 
     if form.validate_on_submit():
-        SalesReport.create_report(
-        member_id = form.member_id.data, # TODO should be pulled from g.user
-        date = form.date.data,
-        racks_am = form.racks_am.data,
-        racks_pm = form.racks_pm.data,
-        gf = form.gf.data,
-        vegan = form.vegan.data,
-        vgf = form.vgf.data,
-        sales = form.sales.data,
-        pizza = form.pizza.data,
-        notes = form.notes.data,
-        weather = form.weather.data,
-        api = form.api.data
-        )
-        db.session.commit()
+        try:
+            SalesReport.create_report(
+                # TODO should be pulled from g.user
+                member_id=CURR_USER_KEY,
+                date=form.date.data,
+                racks_am=form.racks_am.data,
+                racks_pm=form.racks_pm.data,
+                gf=form.gf.data,
+                vegan=form.vegan.data,
+                vgf=form.vgf.data,
+                sales=form.sales.data,
+                pizza=form.pizza.data,
+                notes=form.notes.data,
+                weather='weather',  # from external API
+                aqi='aqi',  # from external API
+            )
+            db.session.commit()
+            return redirect('/')
+
+        except IntegrityError:
+            flash('form not valid')
+            return redirect(sr_URL)
+    else:
+        return render_template(
+            'salesreport.html',
+            form=form,
+            user=g.user,
+            )
+
+    return render_template(
+        'salesreport.html',
+        form=form,
+        user=g.user,
+        mode='Add',
+    )
+
 
 # edit_report - POST GET
 @app.route(f"{sr_URL}/edit", methods=["GET", "POST"])
 def edit_report():
     """ edits report on certain date"""
+
 
 # delete report - though this should not destroy record but move to archive db

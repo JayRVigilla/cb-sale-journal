@@ -3,14 +3,17 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
+
 bcrypt = Bcrypt()
 db = SQLAlchemy()
+
 
 def connect_db(app):
     """ Connect to database"""
 
     db.app = app
     db.init_app(app)
+
 
 class User(db.Model):
     """ Class for User"""
@@ -32,7 +35,8 @@ class User(db.Model):
         nullable=False)
     img_url = db.Column(
         db.String,
-        default='https://i.pinimg.com/originals/b4/00/85/b400851a6b07f8877a9236f275bd8d4f.jpg')
+        default='https://i.pinimg.com/originals/b4/00/85/b400851a6b07f8877a9236f275bd8d4f.jpg'
+        )
     password = db.Column(
         db.String,
         nullable=False)
@@ -46,7 +50,13 @@ class User(db.Model):
         return bcrypt.generate_password_hash(password).decode("utf8")
 
     @classmethod
-    def register(cls, username, password, first_name, last_name, img_url, status):
+    def register(cls,
+        username,
+        password,
+        first_name,
+        last_name,
+        img_url,
+        status):
         """ Register new user """
         # hashed = bcrypt.generate_password_hash(password).decode("utf8")
 
@@ -67,10 +77,12 @@ class User(db.Model):
         u = User.query.filter_by(username=username).first()
 
         if u:
-            is_auth = bcrypt.check_password_hash(u.password, password)
-            if is_auth:
+            # is_auth = bcrypt.check_password_hash(u.password, password)
+            # if is_auth:
+            if bcrypt.check_password_hash(u.password, password):
                 return u
-        return False
+        else:
+            return False
 
 class SalesReport(db.Model):
     """ Class for SalesReports """
@@ -113,7 +125,7 @@ class SalesReport(db.Model):
     weather = db.Column(
         db.String,
         nullable=False)  # received from third party api
-    api = db.Column(
+    aqi = db.Column(
         db.String,
         nullable=False)  # received from third party api
 
@@ -131,21 +143,22 @@ class SalesReport(db.Model):
         pizza,
         notes,
         weather,
-        api)
+        aqi
+    ):
 
         report = SalesReport(
-        member_id,
-        date,
-        racks_am,
-        racks_pm,
-        gf,
-        vegan,
-        vgf,
-        sales,
-        pizza,
-        notes,
-        weather,
-        api
+            member_id,
+            date,
+            racks_am,
+            racks_pm,
+            gf,
+            vegan,
+            vgf,
+            sales,
+            pizza,
+            notes,
+            weather,
+            api
         )
 
         db.session.add(report)
