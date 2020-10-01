@@ -41,7 +41,7 @@ def add_user_to_g():
     """If logged in: add curr_user to Flask global."""
 
     if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
+        g.user = User.query.get_or_404(session[CURR_USER_KEY])
     else:
         g.user = None
 
@@ -62,6 +62,12 @@ def do_logout():
 #     if  not g.user:
 #         flash('You must be logged in.', 'danger')
 #         return redirect('/login')
+
+
+@app.route('/TBD', methods=["GET"])
+def unknown_path():
+    """ Under Construction Routes """
+    return render_template('tbd.html')
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -99,7 +105,7 @@ def get_index():
         else redirects to /users
     """
     if g.user:
-        return redirect('users')
+        return render_template('hub.html', user=g.user)
     return redirect('/login')
 
 
