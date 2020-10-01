@@ -1,9 +1,22 @@
+body{
+  margin: 0 auto;
+}
+
 .navbar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-h1{
-  margin: 0 auto;
+h1, h2{
+  text-align: center;
+}
+
+.container.hub{
+  display: flex;
+  flex-direction: row;
+}
+
+.container.hub > div{
+  width: 50%;
 }

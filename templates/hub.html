@@ -1,19 +1,22 @@
 {% extends 'base.html' %}
 
-{% block header %} {{ user.username }}'s Hub {% endblock %}
+{% block header %} Welcome to the Hub {% endblock %}
 
 {% block content %}
 
-<h1>Welcome to the hub </h1>
-<div class="container">
+<h1>{{ user.username }}'s Hub</h1>
+<div class="container hub">
 
   <div class="tasks">
-    <a href="/TBD">Time Clock</a>
-    <a href="/reports/sales/new">End of Night Book</a>
-    <a href="/TBD">Create Maintenance Ticket</a>
-    <a href="/TBD">Message Board</a>
+    <h2>Tasks</h2>
+    <ul>
+      <li><a href="/TBD">Time Clock</a></li>
+      <li><a href="/reports/sales/new">End of Night Book</a></li>
+      <li><a href="/TBD">Create Maintenance Ticket</a></li>
+      <li><a href="/TBD">Message Board</a></li>
+    </ul>
   </div>
-  
+
   <div class="message-board">
     <h2>Message Board</h2>
     <!--
