@@ -60,7 +60,6 @@ class User(db.Model):
                  status):
 
         """ Register new user """
-        # hashed = bcrypt.generate_password_hash(password).decode("utf8")
 
         user = User(
             username=username,

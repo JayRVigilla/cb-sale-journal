@@ -22,7 +22,7 @@ toolbar = DebugToolbarExtension(app)
 
 
 connect_db(app)
-# db.create_all()
+db.create_all()
 
 # login_manager = LoginManager()
 # login_manager.init_app(app)
@@ -256,7 +256,7 @@ def new_report():
 
     if form.validate_on_submit():
         try:
-            SalesReport.create_report(
+            SalesReport(
                 # TODO should be pulled from g.user
                 member_id=CURR_USER_KEY,
                 date=datetime.date.today(),
