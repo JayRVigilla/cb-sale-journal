@@ -256,9 +256,9 @@ def new_report():
 
     if form.validate_on_submit():
         try:
-            SalesReport(
+            report = SalesReport(
                 # TODO should be pulled from g.user
-                member_id=CURR_USER_KEY,
+                member_id=g.user.id,
                 date=datetime.date.today(),
                 racks_am=form.am_racks.data,
                 racks_pm=form.pm_racks.data,
@@ -271,6 +271,7 @@ def new_report():
                 weather='weather',  # from external API
                 aqi='aqi',  # from external API
             )
+            db.session.add(report)
             db.session.commit()
             return redirect('/')
 

@@ -165,6 +165,4 @@ class SalesReport(db.Model):
             aqi
         )
 
-        db.session.add(report)
-
         return report
