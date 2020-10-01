@@ -4,31 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CB Sales Journal</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <nav>
-    <a href="/users/{{g.user.id}}">
-      {% if g.user %}
+  <nav class="navbar">
+    <div>
+      <a href="/users/{{g.user.id}}">
+        {% if g.user %}
         {{g.user.username}}
-      {% endif %}
-    </a>
+        {% endif %}
+      </a>
+    </div>
     <div>
       <a href="/">Home</a>
       <a href="/logout">Logout</a>
     </div>
   </nav>
-  <h1>{% block header %}{% endblock %}</h1>
 
-  <h3 class="flashes">{% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for message in messages %}
-        {{ message }}
-      {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}</h3>
+  <div class="container">
+    <header>
+      <h1>{% block header %}{% endblock %}</h1>
+    </header>
 
-  <div>{% block content %}{% endblock %}</div>
+    <h3 class="flashes">{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          {{ message }}
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}</h3>
 
+    <div>{% block content %}{% endblock %}</div>
+</div>
 </body>
 </html>
