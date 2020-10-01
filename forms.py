@@ -1,7 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, IntegerField
+from wtforms import (StringField,
+                     PasswordField,
+                     SelectField,
+                     IntegerField,
+                     DateField)
 from wtforms.validators import (InputRequired, Length, URL, Optional)
 # from wtforms_alchemy import model_form_factory
+# import datetime
 
 
 class UserForm(FlaskForm):
@@ -49,7 +54,7 @@ class PrePopulatedForm(UserForm):
     """
 
 
-class SalesReport(FlaskForm):
+class NewJournalEntry(FlaskForm):
     """" Form for nightly sales reporting """
 
     am_racks = IntegerField('am_racks', validators=[InputRequired()])

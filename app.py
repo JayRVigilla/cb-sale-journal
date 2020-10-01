@@ -3,10 +3,11 @@
 from flask import Flask, redirect, render_template, session, g, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+import datetime
 # from flask_login import LoginManager
 
-from forms import UserForm, LoginForm, PrePopulatedForm, SalesReport
-from models import db, connect_db, User
+from forms import UserForm, LoginForm, PrePopulatedForm, NewJournalEntry
+from models import db, connect_db, User, SalesReport
 import pdb
 
 CURR_USER_KEY = "curr_user"
@@ -241,7 +242,7 @@ def get_report():
 
 # create_report - POST
 @app.route(f"{sr_URL}/new", methods=["GET", "POST"])
-def create_report():
+def new_report():
     """ POSTs report to DB
     if not logged in redirect to login
     if form valid then commit to db
@@ -251,16 +252,16 @@ def create_report():
         flash('You must be logged in.', 'danger')
         return redirect('/login')
 
-    form = SalesReport()
+    form = NewJournalEntry()
 
     if form.validate_on_submit():
         try:
             SalesReport.create_report(
                 # TODO should be pulled from g.user
                 member_id=CURR_USER_KEY,
-                date=form.date.data,
-                racks_am=form.racks_am.data,
-                racks_pm=form.racks_pm.data,
+                date=datetime.date.today(),
+                racks_am=form.am_racks.data,
+                racks_pm=form.pm_racks.data,
                 gf=form.gf.data,
                 vegan=form.vegan.data,
                 vgf=form.vgf.data,

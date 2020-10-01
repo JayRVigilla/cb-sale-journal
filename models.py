@@ -2,6 +2,7 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+# import datetime
 
 
 bcrypt = Bcrypt()
@@ -40,7 +41,7 @@ class User(db.Model):
     password = db.Column(
         db.String,
         nullable=False)
-    # viable options will be candidate, member, emeritus, former_member
+    # options will be candidate, member, emeritus, former_member
     status = db.Column(
         db.String,
         default='candidate')
@@ -51,18 +52,19 @@ class User(db.Model):
 
     @classmethod
     def register(cls,
-        username,
-        password,
-        first_name,
-        last_name,
-        img_url,
-        status):
+                 username,
+                 password,
+                 first_name,
+                 last_name,
+                 img_url,
+                 status):
+
         """ Register new user """
         # hashed = bcrypt.generate_password_hash(password).decode("utf8")
 
         user = User(
             username=username,
-            password=hash_pwd(password),
+            password=User.hash_pwd(password),
             first_name=first_name,
             last_name=last_name,
             img_url=img_url,
@@ -84,19 +86,21 @@ class User(db.Model):
         else:
             return False
 
+
 class SalesReport(db.Model):
     """ Class for SalesReports """
+
     __tablename__ = 'sales-reports'
 
     id = db.Column(
         db.Integer,
-        primary_key=True,
-        nullable=False)
-    member_id= db.Column(
+        primary_key=True)
+    member_id = db.Column(
         db.Integer,
         nullable=False)
     date = db.Column(
         db.DateTime,
+        # default=datetime.date,
         nullable=False)
     racks_am = db.Column(
         db.Float,
@@ -124,10 +128,10 @@ class SalesReport(db.Model):
         nullable=False)
     weather = db.Column(
         db.String,
-        nullable=False)  # received from third party api
+        nullable=False)  # TODO received from third party api
     aqi = db.Column(
         db.String,
-        nullable=False)  # received from third party api
+        nullable=False)  # TODO received from third party api
 
     @classmethod
     def create_report(
@@ -145,6 +149,7 @@ class SalesReport(db.Model):
         weather,
         aqi
     ):
+        """ Creates new sales report to db """
 
         report = SalesReport(
             member_id,
@@ -158,7 +163,7 @@ class SalesReport(db.Model):
             pizza,
             notes,
             weather,
-            api
+            aqi
         )
 
         db.session.add(report)
