@@ -3,7 +3,8 @@ from wtforms import (StringField,
                      PasswordField,
                      SelectField,
                      IntegerField,
-                     DateField)
+                     DateField,
+                     TextAreaField)
 from wtforms.validators import (InputRequired, Length, URL, Optional)
 # from wtforms_alchemy import model_form_factory
 # import datetime
@@ -64,4 +65,4 @@ class NewJournalEntry(FlaskForm):
     vgf = IntegerField('vgf', validators=[InputRequired()])
     sales = IntegerField('sales', validators=[InputRequired()])
     pizza = StringField('pizza', validators=[InputRequired()])
-    notes = StringField('notes', validators=[InputRequired()])
+    notes = TextAreaField('notes', validators=[InputRequired()])

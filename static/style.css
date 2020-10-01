@@ -8,7 +8,7 @@ body{
   justify-content: space-between;
 }
 
-h1, h2{
+h1, h2 {
   text-align: center;
 }
 
@@ -19,4 +19,11 @@ h1, h2{
 
 .container.hub > div{
   width: 50%;
+}
+
+form{
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+  margin: 1px auto;
 }
