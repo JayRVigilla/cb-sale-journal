@@ -6,9 +6,11 @@ body{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  background-color: #c4f8fc;
+  padding: 1em;
 }
 
-h1, h2 {
+h1, h2, h3, container, .user.profile {
   text-align: center;
 }
 
@@ -21,9 +23,13 @@ h1, h2 {
   width: 50%;
 }
 
-form{
+form {
   display: flex;
   flex-direction: column;
-  width: 75%;
+  width: 66%;
   margin: 1px auto;
+}
+
+button {
+  max-width: 33%;
 }

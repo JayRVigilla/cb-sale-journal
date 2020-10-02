@@ -8,6 +8,7 @@ import datetime
 
 from forms import UserForm, LoginForm, PrePopulatedForm, NewJournalEntry
 from models import db, connect_db, User, SalesReport
+from secrets import APP_SECRET
 import pdb
 
 CURR_USER_KEY = "curr_user"
@@ -17,7 +18,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///CB_sales_journal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = "secret"
+app.config['SECRET_KEY'] = APP_SECRET
 toolbar = DebugToolbarExtension(app)
 
 
@@ -81,7 +82,7 @@ def login_user():
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", 'success')
-            return redirect('/users')
+            return redirect('/')
         else:
             flash('Invalid credentials', 'danger')
 
@@ -194,7 +195,7 @@ def edit_user_html(id):
     If form not valid, show form.
     """
 
-    if  not g.user:
+    if not g.user:
         flash('You must be logged in.', 'danger')
         return redirect('/login')
 
@@ -295,7 +296,7 @@ def new_report():
         'salesreport.html',
         form=form,
         user=g.user,
-        mode='Add',
+        mode='Submit'
     )
 
 

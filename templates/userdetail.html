@@ -3,24 +3,24 @@
 {% block header %} Cheese Boarder Details {% endblock %}
 
 {% block content %}
-
-<span><img src="{{ image_url }}" alt="profile picture for user"></span>
-<span>
-  <h2>{{ user }}</h2>
-  <h3>{{ status }}</h3>
+<div class="user profile">
+  <img src="{{ image_url }}" alt="profile picture for user">
+  <span>
+    <h2>{{ user }} - {{ status }}</h2>
+    <a class="faux button" href="/users/{{ id }}/edit">Edit User Info</a>
 </span>
-<a href="/users/{{ id }}/edit">Edit</a>
+</div>
 
 <form action="/users/{{ id }}/delete" method="POST">
-  <div>
+  <!-- <div> -->
     <h3>You need another member to Delete</h3>
     <label for="witness-first-name">Username</label>
     <input type="text" placeholder="Enter first name">
 
     <label for="witness-password">Password</label>
     <input type="password" placeholder="Enter password">
-  </div>
-  <button>Delete</button>
+    <button>Delete</button>
+  <!-- </div> -->
 </form>
 
 {% endblock %}
