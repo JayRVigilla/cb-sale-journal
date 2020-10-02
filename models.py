@@ -76,10 +76,9 @@ class User(db.Model):
     def auth(cls, username, password):
         """ Authenticate user """
         u = User.query.filter_by(username=username).first()
+        print(f"\n\n\n****  the value of u is {u} *****\n\n\n")
 
         if u:
-            # is_auth = bcrypt.check_password_hash(u.password, password)
-            # if is_auth:
             if bcrypt.check_password_hash(u.password, password):
                 return u
         else:
@@ -131,6 +130,9 @@ class SalesReport(db.Model):
     aqi = db.Column(
         db.Integer,
         nullable=False)  # TODO received from third party api
+    witness_id = db.Column(
+        db.Integer,
+        nullable=False)
 
     @classmethod
     def create_report(
@@ -146,7 +148,8 @@ class SalesReport(db.Model):
         pizza,
         notes,
         weather,
-        aqi
+        aqi,
+        witness_id
     ):
         """ Creates new sales report to db """
 
@@ -162,7 +165,8 @@ class SalesReport(db.Model):
             pizza,
             notes,
             weather,
-            aqi
+            aqi,
+            witness_id
         )
 
         return report

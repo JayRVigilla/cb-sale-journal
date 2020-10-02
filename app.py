@@ -154,8 +154,6 @@ def add_new_user():
         except IntegrityError:
             flash("Username already taken", 'danger')
             return render_template('userform.html', form=form, mode='Add')
-
-        do_login(new_user)
         return redirect("/users")
     else:
         return render_template(
@@ -168,7 +166,7 @@ def add_new_user():
 def get_user(id):
     """ GET user data """
 
-    if  not g.user:
+    if not g.user:
         flash('You must be logged in.', 'danger')
         return redirect('/login')
 
@@ -204,7 +202,7 @@ def edit_user_html(id):
 
     if form.validate_on_submit() and verify_form.validate_on_submit():
         user = User.auth(verify_form.l_username.data,
-            verify_form.l_password.data)
+                         verify_form.l_password.data)
 
         if user:
             user.username = form.username.data
@@ -260,41 +258,51 @@ def new_report():
         return redirect('/login')
 
     form = NewJournalEntry()
+    verify_form = LoginForm()
 
-    if form.validate_on_submit():
-        try:
-            report = SalesReport(
-                # TODO should be pulled from g.user
-                member_id=g.user.id,
-                date=datetime.date.today(),
-                racks_am=form.am_racks.data,
-                racks_pm=form.pm_racks.data,
-                gf=form.gf.data,
-                vegan=form.vegan.data,
-                vgf=form.vgf.data,
-                sales=form.sales.data,
-                pizza=form.pizza.data,
-                notes=form.notes.data,
-                weather='weather',  # from external API
-                aqi='aqi',  # from external API
-            )
-            db.session.add(report)
-            db.session.commit()
-            return redirect('/')
+    if form.validate_on_submit() and verify_form.validate_on_submit():
+        user = User.auth(verify_form.l_username.data,
+                         verify_form.l_password.data)
+        if (user.id != g.user.id) and (user.status != 'member' or 'emeritus'):
+            try:
+                report = SalesReport(
+                    # TODO should be pulled from g.user
+                    member_id=g.user.id,
+                    date=datetime.date.today(),
+                    racks_am=form.am_racks.data,
+                    racks_pm=form.pm_racks.data,
+                    gf=form.gf.data,
+                    vegan=form.vegan.data,
+                    vgf=form.vgf.data,
+                    sales=form.sales.data,
+                    pizza=form.pizza.data,
+                    notes=form.notes.data,
+                    weather='weather',  # from external API
+                    aqi=000,  # from external API
+                    witness_id=user.id,
+                )
+                db.session.add(report)
+                db.session.commit()
+                return redirect('/')
 
-        except IntegrityError:
-            flash('form not valid')
-            return redirect(sr_URL)
+            except IntegrityError:
+                flash('form not valid')
+                return redirect(f"{sr_URL}/new")
+        else:
+            flash('Witnessing Member not valid')
+            return redirect(f"{sr_URL}/new")
     else:
         return render_template(
             'salesreport.html',
             form=form,
+            verify_form=verify_form,
             user=g.user,
             )
 
     return render_template(
         'salesreport.html',
         form=form,
+        verify_form=verify_form,
         user=g.user,
         mode='Submit'
     )

@@ -13,6 +13,14 @@
     {% endfor %}
     {{ field(placeholder=field.label.text, class="form-control") }}
   {% endfor %}
+
+  <h3>You need a Board Member to witness this report</h3>
+  {% for field in verify_form if field.widget.input_type != 'hidden' %}
+  {% for error in field.errors %}
+    <span class="text-danger">{{ error }}</span>
+  {% endfor %}
+  {{ field(placeholder=field.label.text, class="form-control") }}
+  {% endfor %}
   <button>Submit Report</button>
 </form>
 
