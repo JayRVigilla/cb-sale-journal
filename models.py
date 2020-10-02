@@ -129,7 +129,7 @@ class SalesReport(db.Model):
         db.String,
         nullable=False)  # TODO received from third party api
     aqi = db.Column(
-        db.String,
+        db.Integer,
         nullable=False)  # TODO received from third party api
 
     @classmethod
