@@ -76,7 +76,6 @@ class User(db.Model):
     def auth(cls, username, password):
         """ Authenticate user """
         u = User.query.filter_by(username=username).first()
-        print(f"\n\n\n****  the value of u is {u} *****\n\n\n")
 
         if u:
             if bcrypt.check_password_hash(u.password, password):

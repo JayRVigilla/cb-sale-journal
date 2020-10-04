@@ -10,6 +10,7 @@ from forms import UserForm, LoginForm, PrePopulatedForm, NewJournalEntry
 from models import db, connect_db, User, SalesReport
 from secrets import APP_SECRET
 from aqi import get_aqi
+from weather_api import get_weather
 import pdb
 
 CURR_USER_KEY = "curr_user"
@@ -278,8 +279,8 @@ def new_report():
                     sales=form.sales.data,
                     pizza=form.pizza.data,
                     notes=form.notes.data,
-                    weather='weather',  # from external API
-                    # aqi=000,  # from external API
+                    weather=get_weather(),
+                    # weather='weather',  # from external API
                     aqi=get_aqi(),
                     witness_id=user.id,
                 )
