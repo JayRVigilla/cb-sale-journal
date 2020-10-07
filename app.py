@@ -6,7 +6,7 @@
 from flask import Flask, redirect, render_template, session, g, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-import datetime
+from datetime import date, timedelta
 # from flask_login import LoginManager
 
 from forms import UserForm, LoginForm, PrePopulatedForm, NewJournalEntry
@@ -45,6 +45,8 @@ db.create_all()
 @app.before_request
 def add_user_to_g():
     """If logged in: add curr_user to Flask global."""
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=30)
 
     if CURR_USER_KEY in session:
         g.user = User.query.get_or_404(session[CURR_USER_KEY])
@@ -273,7 +275,7 @@ def new_report():
                 report = SalesReport(
                     # TODO should be pulled from g.user
                     member_id=g.user.id,
-                    date=datetime.date.today(),
+                    date=date.today(),
                     racks_am=form.am_racks.data,
                     racks_pm=form.pm_racks.data,
                     gf=form.gf.data,
