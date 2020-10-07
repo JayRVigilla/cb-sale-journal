@@ -31,8 +31,9 @@ class UserForm(FlaskForm):
             ('candidate', 'Candidate'),
             ('member', 'Member'),
             ('emeritus', 'Emeritus'),
-            ('former_member', 'Former Member')],
-        validators=[Optional()])
+            ('former_member', 'Former Member'),
+            ('former_candidate', 'Former Candidate'),
+            ], validators=[Optional()])
 
 
 class LoginForm(FlaskForm):

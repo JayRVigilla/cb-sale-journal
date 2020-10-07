@@ -1,4 +1,7 @@
-"""Blogly application."""
+"""CB Sales Journal application.
+    may rename this app.
+    Contemplating adding more functions than just Sales Journal
+"""
 
 from flask import Flask, redirect, render_template, session, g, flash
 from flask_debugtoolbar import DebugToolbarExtension
@@ -279,8 +282,8 @@ def new_report():
                     sales=form.sales.data,
                     pizza=form.pizza.data,
                     notes=form.notes.data,
-                    weather=get_weather(),
-                    # weather='weather',  # from external API
+                    # weather=get_weather(),
+                    weather='weather',  # from external API
                     aqi=get_aqi(),
                     witness_id=user.id,
                 )
