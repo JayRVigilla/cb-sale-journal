@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %} Sales Report {% endblock %}
+
+{% block content %}
+
+<div>
+  <h2>{{ report.pizza }}</h2>
+  <p><b>Date:</b> {{ report.date}}</p>
+  <p><b>Weather:</b> {{ report.weather }} AQI {{ report.aqi }}</p>
+  <p><b>Racks (AM/PM):</b> {{ report.racks_am}}/{{ report.racks_pm}}</p>
+  <p><b>Sales:</b> ${{ report.sales }}</p>
+  <p><b>Notes:</b><br> {{ report.notes }}</p>
+  <p><b>Members:</b>
+    <a href="/users/{{ report.member_id }}">{{ report.member_id }}</a>/
+    <a href="/users/{{ report.witness_id}}">{{ report.witness_id }}</a>
+    </p>
+
+</div>
+
+
+{% endblock %}

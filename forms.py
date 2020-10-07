@@ -56,7 +56,7 @@ class PrePopulatedForm(UserForm):
     """
 
 
-class NewJournalEntry(FlaskForm):
+class JournalEntry(FlaskForm):
     """" Form for nightly sales reporting """
 
     am_racks = IntegerField('am_racks', validators=[InputRequired()])
@@ -67,3 +67,6 @@ class NewJournalEntry(FlaskForm):
     sales = IntegerField('sales', validators=[InputRequired()])
     pizza = StringField('pizza', validators=[InputRequired()])
     notes = TextAreaField('notes', validators=[InputRequired()])
+
+class EditJournalEntry(JournalEntry):
+    """ Prepopulates Journal entry form for editing """

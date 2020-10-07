@@ -94,6 +94,7 @@ class SalesReport(db.Model):
         primary_key=True)
     member_id = db.Column(
         db.Integer,
+        db.ForeignKey('users.id'),
         nullable=False)
     date = db.Column(
         db.DateTime,
@@ -128,9 +129,10 @@ class SalesReport(db.Model):
         nullable=False)  # TODO received from third party api
     aqi = db.Column(
         db.Integer,
-        nullable=False)  # TODO received from third party api
+        nullable=False)
     witness_id = db.Column(
         db.Integer,
+        db.ForeignKey('users.id'),
         nullable=False)
 
     @classmethod

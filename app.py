@@ -9,11 +9,11 @@ from sqlalchemy.exc import IntegrityError
 from datetime import date, timedelta
 # from flask_login import LoginManager
 
-from forms import UserForm, LoginForm, PrePopulatedForm, NewJournalEntry
+from forms import UserForm, LoginForm, PrePopulatedForm, JournalEntry
 from models import db, connect_db, User, SalesReport
 from secrets import APP_SECRET
 from aqi import get_aqi
-from weather_api import get_weather
+# from weather_api import get_weather
 import pdb
 
 CURR_USER_KEY = "curr_user"
@@ -65,11 +65,11 @@ def do_logout():
         del session[CURR_USER_KEY]
 
 # FIX doesn't redirect as a function
-# def logged_in():
-#     """ Redirects to /login if not logged in """
-#     if  not g.user:
-#         flash('You must be logged in.', 'danger')
-#         return redirect('/login')
+def logged_in():
+    """ Redirects to /login if not logged in """
+    if  not g.user:
+        flash('You must be logged in.', 'danger')
+        return redirect('/login')
 
 
 @app.route('/TBD', methods=["GET"])
@@ -112,6 +112,8 @@ def get_index():
     """ Redirects to login if no g.user
         else redirects to /users
     """
+    # logged_in()
+
     if g.user:
         return render_template('hub.html', user=g.user)
     return redirect('/login')
@@ -245,12 +247,21 @@ def edit_user_html(id):
 sr_URL = '/reports/sales'
 
 
-# get_report(s) - GET
+# get_report - GET
 @app.route(f"{sr_URL}/<int:id>", methods=["GET"])
-def get_report():
-    """ GETs report of specific date
-    OR of a range of dates """
+def get_report(id):
+    """ GET single report
+    """
+    if not g.user:
+        flash('You must be logged in.', 'danger')
+        return redirect('/login')
 
+    report = SalesReport.query.filter_by(id=id).first()
+
+    return render_template(
+        'reportdetail.html',
+        report=report
+    )
 
 # create_report - POST
 @app.route(f"{sr_URL}/new", methods=["GET", "POST"])
@@ -264,7 +275,7 @@ def new_report():
         flash('You must be logged in.', 'danger')
         return redirect('/login')
 
-    form = NewJournalEntry()
+    form = JournalEntry()
     verify_form = LoginForm()
 
     if form.validate_on_submit() and verify_form.validate_on_submit():
@@ -317,9 +328,23 @@ def new_report():
 
 
 # edit_report - POST GET
-@app.route(f"{sr_URL}/edit", methods=["GET", "POST"])
+@app.route(f"{sr_URL}/<int:id>/edit", methods=["GET", "POST"])
 def edit_report():
-    """ edits report on certain date"""
+    """ edits single report """
+    if not g.user:
+        flash('You must be logged in.', 'danger')
+        return redirect('/login')
 
+    report = SalesReport.query.filter_by(id=id).first()
+    form = JournalEntry()
+    verify_form = LoginForm()
+
+
+    return render_template(
+        'salesreport.html',
+        form=form,
+        verify_form=verify_form,
+        report=report
+    )
 
 # delete report - though this should not destroy record but move to archive db
