@@ -36,7 +36,7 @@ class User(db.Model):
         nullable=False)
     img_url = db.Column(
         db.String,
-        default='https://i.pinimg.com/originals/b4/00/85/b400851a6b07f8877a9236f275bd8d4f.jpg'
+        default='https://i.pinimg.com/originals/b4/00/85/b400851a6b07f8877a9236f275bd8d4f.jpg' # TODO make a static default image
         )
     password = db.Column(
         db.String,
@@ -99,25 +99,19 @@ class SalesReport(db.Model):
     date = db.Column(
         db.DateTime,
         # default=datetime.date,
-        nullable=False)
+        )
     racks_am = db.Column(
-        db.Float,
-        nullable=False)
+        db.Float)
     racks_pm = db.Column(
-        db.Float,
-        nullable=False)
+        db.Float)
     gf = db.Column(
-        db.Integer,
-        nullable=False)
+        db.Float)
     vegan = db.Column(
-        db.Integer,
-        nullable=False)
+        db.Float)
     vgf = db.Column(
-        db.Integer,
-        nullable=False)
+        db.Float)
     sales = db.Column(
-        db.Float,
-        nullable=False)
+        db.Float)
     pizza = db.Column(
         db.String,
         nullable=False)
@@ -126,10 +120,9 @@ class SalesReport(db.Model):
         nullable=False)
     weather = db.Column(
         db.String,
-        nullable=False)  # TODO received from third party api. noaa?
+        nullable=True)  # TODO received from third party api. noaa?
     aqi = db.Column(
-        db.Integer,
-        nullable=False)
+        db.Float)
     witness_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id'),
