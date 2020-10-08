@@ -126,7 +126,7 @@ class SalesReport(db.Model):
         nullable=False)
     weather = db.Column(
         db.String,
-        nullable=False)  # TODO received from third party api
+        nullable=False)  # TODO received from third party api. noaa?
     aqi = db.Column(
         db.Integer,
         nullable=False)
