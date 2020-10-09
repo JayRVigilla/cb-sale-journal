@@ -51,13 +51,14 @@ class User(db.Model):
         return bcrypt.generate_password_hash(password).decode("utf8")
 
     @classmethod
-    def register(cls,
-                 username,
-                 password,
-                 first_name,
-                 last_name,
-                 img_url,
-                 status):
+    def register(
+            cls,
+            username,
+            password,
+            first_name,
+            last_name,
+            img_url,
+            status):
 
         """ Register new user """
 
