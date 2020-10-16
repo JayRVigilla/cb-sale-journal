@@ -6,6 +6,7 @@
 from flask import Flask, redirect, render_template, session, g, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import func
 from datetime import date, timedelta
 # from flask_login import LoginManager
 
@@ -150,7 +151,7 @@ def add_new_user():
     """ Validate form """
     if form.validate_on_submit():
         try:
-            new_user = User.register(
+            User.register(
                 username=form.username.data,
                 password=form.password.data,
                 first_name=form.first_name.data,
@@ -247,15 +248,21 @@ def edit_user_html(id):
 sr_URL = '/reports/sales'
 
 
-# get_report - GET
+# get_reports - GET
 @app.route(f"{sr_URL}/<int:id>", methods=["GET"])
-def get_report(id):
+def get_reports(id):
     """ GET single report
+    TODO turn into GET reports
+        single or lists of many through search criteria: do with params
+        date match (on or between dates)
+        day match (monday, friday, etc)
+        pizza match (input an ingredient)
     """
     if not g.user:
         flash('You must be logged in.', 'danger')
         return redirect('/login')
 
+    # TODO try/except
     report = SalesReport.query.filter_by(id=id).first()
 
     return render_template(
@@ -263,9 +270,29 @@ def get_report(id):
         report=report
     )
 
+
+# @app.route(f"{sr_URL}/search", methods=["GET"])
+# def test_reports():
+#     if not g.user:
+#         flash('You must be logged in.', 'danger')
+#         return redirect('/login')
+
+#     sqla query to build when searching for a day of the week
+#     https://groups.google.com/g/sqlalchemy/c/M3ZBLNx9_6s
+    SalesReport.query.filter(
+                        func.extract(SalesReport.date).between(2, 6)).all()
+#     https://stackoverflow.com/questions/31841054/extract-a-weekday-from-an-sqlalchemy-instrumentedattribute-column-type-is-dat
+
+#     sqla query to build when searching between dates
+#     https://stackoverflow.com/questions/8895208/sqlalchemy-how-to-filter-date-field
+#     can modify this for sales, racks, v/gf/vgf values
+
+#     query for notes, weather, pizza to contain a word
+#     https://stackoverflow.com/questions/14290857/sql-select-where-field-contains-words
+
 # create_report - POST
 @app.route(f"{sr_URL}/new", methods=["GET", "POST"])
-def new_report():
+def create_report():
     """ POSTs report to DB
     if not logged in redirect to login
     if form valid then commit to db
@@ -338,7 +365,6 @@ def edit_report():
     report = SalesReport.query.filter_by(id=id).first()
     form = JournalEntry()
     verify_form = LoginForm()
-
 
     return render_template(
         'salesreport.html',
