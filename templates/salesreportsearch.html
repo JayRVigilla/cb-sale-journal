@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block header %} Search Sales Reports {% endblock %}
+
+{% block content %}
+
+<!-- make wtform for the multiple fields, each input named -->
+<form class="navbar-form navbar-right" action="/reports/sales">
+    <input name="q" class="form-control" placeholder="Search Reports" id="search">
+    <button class="btn btn-default">
+        <span class="fa fa-search"></span>
+    </button>
+</form>
+
+<ul>
+    {% for report in reports %}
+    <div class="sales report">
+        <h2>{{ report.pizza }}</h2>
+        <p><b>Date:</b> {{ report.date}}</p>
+        <p><b>Weather:</b> {{ report.weather }} AQI {{ report.aqi }}</p>
+        <p><b>Racks (AM/PM):</b> {{ report.racks_am}}/{{ report.racks_pm}}</p>
+        <p><b>Sales:</b> ${{ report.sales }}</p>
+        <p><b>Notes:</b><br> {{ report.notes }}</p>
+        <p><b>Members:</b>
+          <a href="/users/{{ report.member_id }}">{{ report.member_id }}</a>/
+          <a href="/users/{{ report.witness_id}}">{{ report.witness_id }}</a>
+          </p>
+      </div>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

@@ -3,7 +3,7 @@
     Contemplating adding more functions than just Sales Journal
 """
 
-from flask import Flask, redirect, render_template, session, g, flash
+from flask import Flask, redirect, request, render_template, session, g, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func
@@ -271,16 +271,16 @@ def get_reports(id):
     )
 
 
-# @app.route(f"{sr_URL}/search", methods=["GET"])
-# def test_reports():
-#     if not g.user:
-#         flash('You must be logged in.', 'danger')
-#         return redirect('/login')
+@app.route(f"{sr_URL}", methods=["GET"])
+def test_reports():
+    if not g.user:
+        flash('You must be logged in.', 'danger')
+        return redirect('/login')
 
 #     sqla query to build when searching for a day of the week
 #     https://groups.google.com/g/sqlalchemy/c/M3ZBLNx9_6s
-    SalesReport.query.filter(
-                        func.extract(SalesReport.date).between(2, 6)).all()
+    # SalesReport.query.filter(
+    #                     func.extract(SalesReport.date).between(2, 6)).all()
 #     https://stackoverflow.com/questions/31841054/extract-a-weekday-from-an-sqlalchemy-instrumentedattribute-column-type-is-dat
 
 #     sqla query to build when searching between dates
@@ -289,6 +289,20 @@ def get_reports(id):
 
 #     query for notes, weather, pizza to contain a word
 #     https://stackoverflow.com/questions/14290857/sql-select-where-field-contains-words
+
+    # getting querying object
+    search = request.args.get('q')
+
+    if not search:
+        reports = SalesReport.query.all()
+    else:
+        # TODO search will have to be handled on each key
+        # and then concat together for search variable below
+        reports = SalesReport.query.filter(
+            User.username.like(f"%{search}%")).all()
+
+    return render_template('salesreportsearch.html', reports=reports)
+
 
 # create_report - POST
 @app.route(f"{sr_URL}/new", methods=["GET", "POST"])
