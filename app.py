@@ -291,17 +291,37 @@ def test_reports():
 #     https://stackoverflow.com/questions/14290857/sql-select-where-field-contains-words
     form = SearchSalesReports()
     # getting querying object
-    search = request.args.get('q')
+    queries = request.args.get('q')
 
-    if not search:
+    if not queries:
         reports = SalesReport.query.all()
     else:
+        search = ''
         # TODO search will have to be handled on each key
-        # and then concat together for search variable below
+        # and then concat together for search variable above
+
+        # queries = {
+        #           date,
+        #           day,
+        #           pizza,
+        #           am_racks,
+        #           pm_racks,
+        #           gf,
+        #           vegan,
+        #           vgf,
+        #           sales,
+        #           notes,
+        #           weather,
+        #           aqi,
+        #           member,
+        #           witness,
+        #       }
+
         reports = SalesReport.query.filter(
             User.username.like(f"%{search}%")).all()
 
-    return render_template('salesreportsearch.html', reports=reports, form=form)
+    return render_template(
+        'salesreportsearch.html', reports=reports, form=form)
 
 
 # create_report - POST

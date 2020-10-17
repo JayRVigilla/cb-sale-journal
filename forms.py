@@ -84,10 +84,16 @@ class MultiCheckboxField(SelectMultipleField):
 # class CompareNumberField(SelectField):
 #     widget = widgets.TextInput()
 
+
 class SearchSalesReports(FlaskForm):
     """ For for searching Sales Reports """
 
-    # Dates: radio for on a date OR between dates
+    # Dates: radio for 'on a date' OR 'between dates'
+    # date_sort = SelectField('Sort By Date', choices=[
+    #     DateField('On Date', format='%Y-%m-%d'),
+    #     DateField('from date', format='%Y-%m-%d'),
+    #     DateField('to date', format='%Y-%m-%d')
+    # ])
     date_on = DateField('On Date', format='%Y-%m-%d')
     date_from = DateField('from date', format='%Y-%m-%d')
     date_to = DateField('to date', format='%Y-%m-%d')
@@ -117,6 +123,7 @@ class SearchSalesReports(FlaskForm):
     notes = StringField('notes')
     # Weather: same
     weather = StringField('Weather')
+    aqi = IntegerField('Weather')
     # Member: must be int
     member = IntegerField('Member')
     # Witness: must be int
