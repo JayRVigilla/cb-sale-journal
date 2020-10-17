@@ -6,15 +6,28 @@
 
 <!-- make wtform for the multiple fields, each input named -->
 <form class="navbar-form navbar-right" action="/reports/sales">
-    <input name="q" class="form-control" placeholder="Search Reports" id="search">
+
+    {% for field in form if field.widget.input_type != 'hidden' %}
+        {% for error in field.errors %}
+            <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+        <!--  create labels -->
+        <label>
+            {{ field.label.text }}
+        </label>
+        {{ field(placeholder=field.label.text, class="form-control") }}
+
+    {% endfor %}
+
+
     <button class="btn btn-default">
-        <span class="fa fa-search"></span>
+        <span class="fa fa-search">Search</span>
     </button>
 </form>
 
 <ul>
     {% for report in reports %}
-    <div class="sales report">
+    <!-- <div class="sales report">
         <h2>{{ report.pizza }}</h2>
         <p><b>Date:</b> {{ report.date}}</p>
         <p><b>Weather:</b> {{ report.weather }} AQI {{ report.aqi }}</p>
@@ -22,10 +35,11 @@
         <p><b>Sales:</b> ${{ report.sales }}</p>
         <p><b>Notes:</b><br> {{ report.notes }}</p>
         <p><b>Members:</b>
-          <a href="/users/{{ report.member_id }}">{{ report.member_id }}</a>/
-          <a href="/users/{{ report.witness_id}}">{{ report.witness_id }}</a>
-          </p>
-      </div>
+            <a href="/users/{{ report.member_id }}">{{ report.member_id }}</a>/
+            <a href="/users/{{ report.witness_id}}">{{ report.witness_id }}</a>
+            </p>
+        </div> -->
+        {% block list %}{% endblock %}
     {% endfor %}
     </ul>
 

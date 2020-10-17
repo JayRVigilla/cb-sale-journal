@@ -3,8 +3,10 @@ from wtforms import (StringField,
                      PasswordField,
                      SelectField,
                      IntegerField,
-                     DateField,
-                     TextAreaField)
+                     TextAreaField,
+                     SelectMultipleField,
+                     )
+from wtforms.fields.html5 import DateField
 from wtforms.validators import (InputRequired, Length, URL, Optional)
 # from wtforms_alchemy import model_form_factory
 # import datetime
@@ -70,3 +72,29 @@ class JournalEntry(FlaskForm):
 
 class EditJournalEntry(JournalEntry):
     """ Prepopulates Journal entry form for editing """
+
+class SearchSalesReports(FlaskForm):
+    """ For for searching Sales Reports """
+
+    # Dates: radio for on a date OR between dates
+    date_on = DateField('On Date', format='%Y-%m-%d')
+    date_from = DateField('from date', format='%Y-%m-%d')
+    date_to = DateField('to date', format='%Y-%m-%d')
+    # Day: Which day of the week? check boxes
+    day = SelectMultipleField('On a day', choices=[('monday', 'Mon'),
+                                     ('tuesday', 'Tues'),
+                                     ('wednesday', 'Wed'),
+                                     ('thursday', 'Thurs'),
+                                     ('friday', 'Fri'),
+                                     ('saturday', 'Sat'),
+                                     ('sunday', 'Sun'),
+                                      ])
+    # Pizza: contains any of the listed ingredients --> comma or space separate multiples?
+    
+    # Rack Count AM: greater than, equal to, or less than check boxes and number input
+    # Rack Count PM
+    # Sales: greater than, equal to, or less than check boxes and number input
+    # Notes: contains any of the search terms --> comma or space separate multiples?
+    # Weather: same
+    # Member: must be int
+    # Witness: must be int

@@ -10,7 +10,7 @@ from sqlalchemy import func
 from datetime import date, timedelta
 # from flask_login import LoginManager
 
-from forms import UserForm, LoginForm, PrePopulatedForm, JournalEntry
+from forms import UserForm, LoginForm, PrePopulatedForm, JournalEntry, SearchSalesReports
 from models import db, connect_db, User, SalesReport
 from secrets import APP_SECRET
 from aqi import get_aqi
@@ -289,7 +289,7 @@ def test_reports():
 
 #     query for notes, weather, pizza to contain a word
 #     https://stackoverflow.com/questions/14290857/sql-select-where-field-contains-words
-
+    form = SearchSalesReports()
     # getting querying object
     search = request.args.get('q')
 
@@ -301,7 +301,7 @@ def test_reports():
         reports = SalesReport.query.filter(
             User.username.like(f"%{search}%")).all()
 
-    return render_template('salesreportsearch.html', reports=reports)
+    return render_template('salesreportsearch.html', reports=reports, form=form)
 
 
 # create_report - POST
