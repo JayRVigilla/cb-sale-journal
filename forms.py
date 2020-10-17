@@ -5,6 +5,7 @@ from wtforms import (StringField,
                      IntegerField,
                      TextAreaField,
                      SelectMultipleField,
+                     widgets,
                      )
 from wtforms.fields.html5 import DateField
 from wtforms.validators import (InputRequired, Length, URL, Optional)
@@ -70,8 +71,15 @@ class JournalEntry(FlaskForm):
     pizza = StringField('pizza', validators=[InputRequired()])
     notes = TextAreaField('notes', validators=[InputRequired()])
 
+
 class EditJournalEntry(JournalEntry):
     """ Prepopulates Journal entry form for editing """
+
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
 
 class SearchSalesReports(FlaskForm):
     """ For for searching Sales Reports """
@@ -81,20 +89,22 @@ class SearchSalesReports(FlaskForm):
     date_from = DateField('from date', format='%Y-%m-%d')
     date_to = DateField('to date', format='%Y-%m-%d')
     # Day: Which day of the week? check boxes
-    day = SelectMultipleField('On a day', choices=[('monday', 'Mon'),
-                                     ('tuesday', 'Tues'),
-                                     ('wednesday', 'Wed'),
-                                     ('thursday', 'Thurs'),
-                                     ('friday', 'Fri'),
-                                     ('saturday', 'Sat'),
-                                     ('sunday', 'Sun'),
+    day = MultiCheckboxField('On a day', choices=[('monday', 'Mon'),
+                                                  ('tuesday', 'Tues'),
+                                                  ('wednesday', 'Wed'),
+                                                  ('thursday', 'Thurs'),
+                                                  ('friday', 'Fri'),
+                                                  ('saturday', 'Sat'),
+                                                  ('sunday', 'Sun'),
                                       ])
-    # Pizza: contains any of the listed ingredients --> comma or space separate multiples?
-    
-    # Rack Count AM: greater than, equal to, or less than check boxes and number input
+    # Pizza: contains any of the listed ingredients -->
+    #   comma or space separate multiples?
+
+    # Rack Count AM: <, =, > than check boxes and number input
     # Rack Count PM
     # Sales: greater than, equal to, or less than check boxes and number input
-    # Notes: contains any of the search terms --> comma or space separate multiples?
+    # Notes: contains any of the search terms -->
+    #   comma or space separate multiples?
     # Weather: same
     # Member: must be int
     # Witness: must be int
