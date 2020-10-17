@@ -76,10 +76,13 @@ class EditJournalEntry(JournalEntry):
     """ Prepopulates Journal entry form for editing """
 
 
+# https://gist.github.com/juzten/2c7850462210bfa540e3
 class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
+# class CompareNumberField(SelectField):
+#     widget = widgets.TextInput()
 
 class SearchSalesReports(FlaskForm):
     """ For for searching Sales Reports """
@@ -96,15 +99,25 @@ class SearchSalesReports(FlaskForm):
                                                   ('friday', 'Fri'),
                                                   ('saturday', 'Sat'),
                                                   ('sunday', 'Sun'),
-                                      ])
+                                                  ])
     # Pizza: contains any of the listed ingredients -->
     #   comma or space separate multiples?
-
+    pizza = StringField('pizza ingredients')
     # Rack Count AM: <, =, > than check boxes and number input
+    am_racks = IntegerField('AM Racks')
     # Rack Count PM
+    pm_racks = IntegerField('PM Racks')
+    gf = IntegerField('gf')
+    vegan = IntegerField('vegan')
+    vgf = IntegerField('vgf')
     # Sales: greater than, equal to, or less than check boxes and number input
+    sales = IntegerField('sales')
     # Notes: contains any of the search terms -->
     #   comma or space separate multiples?
+    notes = StringField('notes')
     # Weather: same
+    weather = StringField('Weather')
     # Member: must be int
+    member = IntegerField('Member')
     # Witness: must be int
+    witness = IntegerField('Witness')
