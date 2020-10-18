@@ -329,6 +329,18 @@ def test_reports():
         #       q = SalesReport.key = [key]
         #   search.append(q)
 
+        for key in queries:
+            if type(queries[key]) is str:
+                #   ** ensure for lowercase search
+                q = SalesReport.key.like(queries[key])
+            if key.comparison:
+                # FIX how to i knit this together? as a string?
+                q = SalesReport.key key[comparison] key[value]
+            if key.from:
+                q = key.to < SalesReport.key < key.from
+            if (type([key])) or (isinstance([key], datetime.date)):
+                q = SalesReport.key = [key]
+            search.append(q)
         reports = SalesReport.query.filter(search).all()
 
     return render_template(
