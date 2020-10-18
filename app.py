@@ -296,7 +296,7 @@ def test_reports():
     if not queries:
         reports = SalesReport.query.all()
     else:
-        search = ''
+        search = []
         # TODO search will have to be handled on each key
         # and then concat together for search variable above
 
@@ -317,8 +317,19 @@ def test_reports():
         #           witness,
         #       }
 
-        reports = SalesReport.query.filter(
-            User.username.like(f"%{search}%")).all()
+        # for key in queries
+        #   if typeof [key] is string
+        #       ** ensure for lowercase search
+        #       q = SalesReport.key.like(queries[key])
+        #   if key.comparison
+        #       q = SalesReport.key [comparison] key[value]
+        #   if key.from
+        #       q = key.to < SalesReport.key < key.from
+        #   if typeof [key] is integer or datetime
+        #       q = SalesReport.key = [key]
+        #   search.append(q)
+
+        reports = SalesReport.query.filter(search).all()
 
     return render_template(
         'salesreportsearch.html', reports=reports, form=form)
