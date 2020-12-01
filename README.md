@@ -1,15 +1,7 @@
-Python Flask Jinja app
+# Sales Journal API
 
-for use @ Cheese Board in Berkeley, CA
+Python | Flask | Postgres | Jinja
 
-online sales journal
-will add in features to log:
-    pizza of the day
-    rack counts for lunch and dinner
-    sales
-    notes
-    sales predicitons
+An online sales journal modeled to replace paper sales journal at The Cheese Board Collective in Berkeley, CA.
 
-will need to log in as a user
-  potential to be full CB HUB with timeclock functionality
-
+Sales Journal allows logged in user to track sales of pizzas by speed rack count (20 pizzas to a speed rack) and automatically pulls local air and AQI from openweathermap.org for each report.
